@@ -1,7 +1,0 @@
-bin/
-lib/
-run/
-node_modules/
-*.swp
-*.DS_Store
-db_config.js

@@ -4,4 +4,4 @@ run/
 node_modules/
 *.swp
 *.DS_Store
-config.js
+db_config.js

@@ -1,7 +1,7 @@
 var app = require('express')()
 var bodyParser = require('body-parser')
 
-var database = require('./models.js')
+var database = require('./database.js')
 
 //db
 database.syncTestReadingModel() // make sure test reading model is synced w db

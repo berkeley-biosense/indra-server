@@ -1,26 +1,22 @@
 {
-  "name": "collector",
-  "version": "0.0.1",
-  "description": "a collection server for indra",
-  "main": "collector.js",
+  "name": "pm2app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "db_config.js",
   "dependencies": {
     "body-parser": "^1.12.2",
     "express": "^4.12.3",
+    "minimist": "^1.1.1",
+    "pg": "^4.3.0",
     "pg-hstore": "^2.3.2",
+    "pg-native": "^1.8.0",
     "sequelize": "^2.0.6"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "github.com/indra-net/collection-server"
-  },
-  "author": "elsehow",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/indra-net/collection-server/issues"
-  },
-  "homepage": "https://github.com/indra-net/collection-server"
+  "author": "",
+  "license": "ISC"
 }

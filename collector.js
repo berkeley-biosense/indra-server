@@ -1,10 +1,6 @@
 var app = require('express')()
 var bodyParser = require('body-parser')
-
 var database = require('./database.js')
-
-//db
-database.syncTestReadingModel() // make sure test reading model is synced w db
 
 //server
 app.use(bodyParser.json())
@@ -16,8 +12,12 @@ app.use(function(req, res, next) {
   next()
 })
 
+//db
+database.syncNeuroskyReadingModel() // make sure test reading model is synced w db
+
 app.post('/', function (req, res) {
-  database.saveTestReading(req.body)
+  console.log('heyyyy')
+  database.saveNeuroskyReading(req.body)
   res.sendStatus(200)
 })
 

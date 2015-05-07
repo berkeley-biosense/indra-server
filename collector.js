@@ -20,7 +20,7 @@ server.use(
 // make sure test reading model is synced w db
 database.syncNeuroskyReadingModel() 
 
-app.post('/', function (req, res, next) {
+server.post('/', function (req, res, next) {
   database.saveNeuroskyReading(req.body)
   res.end(200)
   return next();

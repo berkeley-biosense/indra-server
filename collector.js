@@ -1,24 +1,30 @@
-var app = require('express')()
-var bodyParser = require('body-parser')
+var restify = require('restify');
 var database = require('./database.js')
 
+port = 23023
+
 //server
-app.use(bodyParser.json())
+var server = restify.createServer({});
+server.use(restify.bodyParser())
 
 // allow CORS
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-  next()
-})
+server.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+)
 
 //db
-database.syncNeuroskyReadingModel() // make sure test reading model is synced w db
+// make sure test reading model is synced w db
+database.syncNeuroskyReadingModel() 
 
-app.post('/', function (req, res) {
-  console.log('heyyyy')
+app.post('/', function (req, res, next) {
   database.saveNeuroskyReading(req.body)
-  res.sendStatus(200)
+  res.end(200)
+  return next();
 })
 
-var server = app.listen(23023)
+server.listen(port)
+console.log('listening on port ' + port)

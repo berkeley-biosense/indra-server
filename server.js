@@ -1,48 +1,32 @@
 var restify = require('restify')
-var db_config = require('./db_config')
-var thinky = require('thinky')({
-  port: db_config.port,
-  host: db_config.host,
-  db: db_config.name,
-})
-var type = thinky.type;
 var bunyan = require('bunyan')
 var log = bunyan.createLogger({name: 'indra-collection-server'});
+var isValid = require('./indraSchemaValidator.js')
 
 // config
 var port = 23023
-
-// schema:
-// {
-//   app: 'appname'
-//   user: 'ffff'
-//   data: {...}
-// }
-var Post = thinky.createModel("Post", {
-    app: type.string(),
-    user: type.string(),
-    data: type.object(),
-}); 
 
 var server = restify.createServer({})
 server.use(restify.bodyParser())
 server.use(restify.CORS())
 server.use(restify.fullResponse())
 
-// TODO: lazily coded 'rooms'
-server.post('/', function (req, res, next) {
-  try {
-    var post = new Post(req.body)
-    // console.log(post)
-    post.save()
-    res.writeHead(200)
-    res.end()
+function handleRequest (req, res, next) {
+  if (isValid(req.body) && req.params.channel) {
+    log.info('channel -> %s', req.params.channel)
+    res.send(201)
     return next();
-  } catch (err) {
-    log.warn('error saving data -> %s', err);
-    return next(new restify.UnprocessableEntityError('API requests must be json, with proper headers.'));
   }
-})
+  else {
+    log.warn('bad schema -> %s', JSON.stringify(req.body));
+    return next(new restify.UnprocessableEntityError('API requests must be json, with proper headers, and must be posted to a channel. Refer to the API guide for JSON schema.'));
+  }
+  // log.warn('error saving data -> %s', err);
+  // return next(new restify.BadRequestError('API requests must be json, with proper headers.'));
+}
+
+// TODO: lazily coded 'rooms'
+server.post('/post/:channel', handleRequest)
 
 server.listen(port)
 log.info('listening on %s', port)

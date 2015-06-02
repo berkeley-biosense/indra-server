@@ -4,8 +4,8 @@
   "description": "",
   "main": "db_config.js",
   "dependencies": {
-    "restify": "^3.0.2",
-    "thinky": "^2.0.5"
+    "jsonschema": "^1.0.1",
+    "restify": "^3.0.2"
   },
   "devDependencies": {
     "bunyan": "^1.3.5",
@@ -13,7 +13,6 @@
     "tape": "^4.0.0"
   },
   "scripts": {
-    "test": "node ./test/test.js | tap-spec",
     "start": "node server.js"
   },
   "author": "",

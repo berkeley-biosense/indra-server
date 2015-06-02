@@ -1,11 +1,8 @@
+var config = require('./config.js')
 var restify = require('restify')
 var bunyan = require('bunyan')
-var log = bunyan.createLogger({name: 'indra-collection-server'});
+var log = bunyan.createLogger({name: config.logName})
 var isValid = require('./indraSchemaValidator.js')
-var config = require('./config.js')
-
-// config
-var port = 23023
 
 var server = restify.createServer({})
 server.use(restify.bodyParser())
@@ -13,20 +10,25 @@ server.use(restify.CORS())
 server.use(restify.fullResponse())
 
 function handleRequest (req, res, next) {
-  if (isValid(req.body) && req.params.channel) {
-    res.send(201)
-    return next();
-  }
-  else {
+  // valid data + a channel -> send 201 + process data
+  if (isValid(req.body)) {
+    if (req.params.channel) {
+      res.send(201)
+      return next();
+    // no channel -> 400
+    } else {
+      log.warn('someone tried to post this no channel -> %s', req.body);
+      return next(new restify.BadRequestError(config.badRequestErrorMessage));
+    }
+  // bad data -> 422
+  } else {
     log.warn('bad schema -> %s', JSON.stringify(req.body));
     return next(new restify.UnprocessableEntityError(config.unprocessableEntityErrorMessage));
   }
-  // log.warn('error saving data -> %s', err);
-  // return next(new restify.BadRequestError(config.badRequestErrorMessage));
 }
 
 // lazily coded 'channels'
 server.post('/post/:channel', handleRequest)
 
-server.listen(port)
-log.info('listening on %s', port)
+server.listen(config.port)
+log.info('listening on %s', config.port)

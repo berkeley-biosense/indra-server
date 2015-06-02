@@ -9,7 +9,7 @@ this server takes post requests with the schema:
 }
 ```
 
-and posts them over the pusher channel defined in config.js
+and saves these data to couch db.
 
 ## development
 

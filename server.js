@@ -1,4 +1,4 @@
-var config = require('../config.js')
+var config = require('./config.js')
 var _ = require('lodash')
 var cradle = require('cradle')
 var restify = require('restify')

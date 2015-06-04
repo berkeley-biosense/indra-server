@@ -1,6 +1,6 @@
 ## indra collection server
 
-this server takes post requests to the route `/data/` with the schema:
+This server takes post requests to the route `/data/` with the schema:
 
 ```
 {
@@ -9,11 +9,19 @@ this server takes post requests to the route `/data/` with the schema:
 }
 ```
 
-it adds to this POST request a field `createdAt` with an ISOString, then (1) publishes the data over a configured Pusher channel (2) saves the data to a couchDB database
+It adds to this POST request a field `createdAt` with an ISOString.
 
-## development
+Then it (1) publishes the data over a configured Pusher channel (2) saves the data to a couchDB database
 
-first, `npm install`
+## Development
+
+### CouchDB + Pusher
+first, setup a couchDB database and make a Pusher API key. use `config-EXAMPLE.js to make` as a template.
+
+once you have your CouchDB set up, you'll probably want to add some views. here are [a few handy views](https://gist.github.com/elsehow/5d2a7e8c53042ba26058) i've prepared early. consult CouchDB reference for adding views to design docs.
+
+### Request server
+then, `npm install`.
 
 to run, `node server.js | bunyan`
 

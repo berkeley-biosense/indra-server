@@ -1,14 +1,14 @@
-var config = require('./config.js')
+var config = require('../config.js')
+var _ = require('lodash')
+var cradle = require('cradle')
 var restify = require('restify')
 var bunyan = require('bunyan')
 var log = bunyan.createLogger({name: config.logName})
-var isValid = require('./indraSchemaValidator.js')
+var isSchemaValid = require('./indraSchemaValidator.js')
 
-//couch
-var couchdb = require('./couchdb.js')
-var cradle = require('cradle')
-// connect to couch
+// connect to couch db
 db = new(cradle.Connection)(config.dbHost, config.dbPort, {
+    // secure: true,
     auth: { username: config.dbAdminUsername, password: config.dbAdminPassword }
   }).database(config.dbName)
 // create db if it doesnt exist
@@ -25,35 +25,38 @@ db.exists(function (err, exists) {
   }
 })
 
-var server = restify.createServer({})
-server.use(restify.bodyParser())
-server.use(restify.CORS())
-server.use(restify.fullResponse())
+// extends post with {createdAt: 'ISOString'} and saves it to db
+function append (db, post) {
+  // add createdAt date to the object
+  var d = new Date()
+  var toSave = _.extend(post, { createdAt: d.toISOString() })
+  // save the date
+  db.save(toSave)
+  return toSave
+}
 
 function handleRequest (req, res, next) {
-  // valid data + a channel 
-  // -> send 201 + save data to couch
-  if (isValid(req.body)) {
-    if (req.params.channel) {
-      couchdb.append(db, req.body, req.params.channel)
-      res.send(201)
-      return next();
-    }
-    // no channel -> 400 BadRequestError
-     else {
-      log.warn('someone tried to post this no channel -> %s', req.body);
-      return next(new restify.BadRequestError(config.badRequestErrorMessage));
-    }
+  // valid json && a channel 
+  // -> send 202 + save data to couch
+  if (isSchemaValid(req.body)) {
+    var savedData = append(db, req.body)
+    res.send(202)
+    return next();
   }
   // bad data -> 422 UnprocessableEntityError
   else {
-    log.warn('bad schema -> %s', JSON.stringify(req.body));
+    log.warn('bad data schema -> %s', JSON.stringify(req.body));
     return next(new restify.UnprocessableEntityError(config.unprocessableEntityErrorMessage));
   }
 }
 
-// lazily coded 'channels'
-server.post('/post/:channel', handleRequest)
-
+// setup server
+var server = restify.createServer({})
+server.use(restify.bodyParser())
+server.use(restify.CORS())
+server.use(restify.fullResponse())
+// post request route is /data/
+server.post('/data/', handleRequest)
+// launch server
 server.listen(config.port)
 log.info('listening on %s', config.port)

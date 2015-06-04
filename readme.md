@@ -23,6 +23,6 @@ once you have your CouchDB set up, you'll probably want to add some views. here 
 ### Request server
 then, `npm install`.
 
-to run, `node server.js | bunyan`
+to run, `npm start`
 
 for tests, refer to the [e2e test suite](http://github.com/testing-suite)

@@ -5,7 +5,7 @@ var restify = require('restify')
 var Pusher = require('pusher')
 var bunyan = require('bunyan')
 var log = bunyan.createLogger({name: config.LOG_NAME})
-var isSchemaValid = require('./indraSchemaValidator.js')
+var isSchemaValid = require('./lib/indraSchemaValidator.js')
 
 // create pusher server
 var pusher = new Pusher({

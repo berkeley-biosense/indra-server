@@ -12,11 +12,14 @@
   },
   "devDependencies": {
     "bunyan": "^1.3.5",
+    "pusher-client": "^0.2.3",
+    "request-json": "^0.5.3",
     "tap-spec": "^4.0.0",
     "tape": "^4.0.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "test": "node ./test/e2e-test.js | tap-spec",
+    "start": "node server.js | bunyan"
   },
   "author": "",
   "license": "ISC"

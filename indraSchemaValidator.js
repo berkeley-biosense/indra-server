@@ -2,8 +2,7 @@ var validate = require('jsonschema').validate
 
 // schema:
 // {
-//   user: 'ffff'
-//   device: 'neurosky'
+//   type: 'someString'
 //   data: {...}
 // }
 var indraSchema = {

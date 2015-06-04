@@ -1,15 +1,15 @@
 ## indra collection server
 
-this server takes post requests with the schema:
+this server takes post requests to the route `/data/` with the schema:
+
 ```
 {
-  user: 'someString'
-  device: 'someString'
-  data: {arbitrary: 'object', ... }
+  type: 'someString'
+  data: {}
 }
 ```
 
-and saves these data to couch db.
+it adds to this POST request a field `createdAt` with an ISOString, then (1) publishes the data over a configured Pusher channel (2) saves the data to a couchDB database
 
 ## development
 

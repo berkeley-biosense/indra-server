@@ -2,16 +2,28 @@ var config = require('../config.js')
 var _ = require('lodash')
 var cradle = require('cradle')
 var restify = require('restify')
+var Pusher = require('pusher')
 var bunyan = require('bunyan')
-var log = bunyan.createLogger({name: config.logName})
+var log = bunyan.createLogger({name: config.LOG_NAME})
 var isSchemaValid = require('./indraSchemaValidator.js')
 
-// connect to couch db
-db = new(cradle.Connection)(config.dbHost, config.dbPort, {
+// create pusher server
+var pusher = new Pusher({
+  appId: config.PUSHER_APP_ID,
+  key: config.PUSHER_KEY,
+  secret: config.PUSHER_SECRET, 
+  encrypted: config.IS_PUSHER_ENCRYPTED, // optional, defaults to false
+  // host: 'HOST', // optional, defaults to api.pusherapp.com 
+  // port: PORT, // optional, defaults to 80 for unencrypted and 443 for encrypted 
+})
+
+// connect to couch 
+db = new(cradle.Connection)(config.DB_HOST, config.DB_PORT, {
     // secure: true,
-    auth: { username: config.dbAdminUsername, password: config.dbAdminPassword }
-  }).database(config.dbName)
-// create db if it doesnt exist
+    auth: { username: config.DB_ADMIN_USERNAME, password: config.DB_ADMIN_PASSWORD }
+  }).database(config.DB_NAME)
+
+// create couchdb if it doesnt exist
 db.exists(function (err, exists) {
   if (err) 
     log.warn('db error -> %s', err)
@@ -25,38 +37,45 @@ db.exists(function (err, exists) {
   }
 })
 
-// extends post with {createdAt: 'ISOString'} and saves it to db
-function append (db, post) {
-  // add createdAt date to the object
-  var d = new Date()
-  var toSave = _.extend(post, { createdAt: d.toISOString() })
-  // save the date
-  db.save(toSave)
-  return toSave
+// sends data through pusherClient
+function publish (pusherServer, data) {
+  // all data sent over a channel called 'everything'
+  pusherServer.trigger('everything'
+    // data.type is the pusher event name
+    , data.type
+    , data);
 }
 
+// extends post with {createdAt: 'ISOString'} and saves it to db
+function addCreatedAt (post) {
+  var d = new Date()
+  return _.extend(post, { createdAt: d.toISOString() })
+}
+
+// handles JSON post requests
 function handleRequest (req, res, next) {
-  // valid json && a channel 
-  // -> send 202 + save data to couch
+  // if valid json -> 
   if (isSchemaValid(req.body)) {
-    var savedData = append(db, req.body)
-    res.send(202)
+    data = addCreatedAt(req.body) // add createdAt field
+    db.save(data)  // append data to couch db
+    publish(pusher, data) // publish over pusher
+    res.send(202) // send 202
     return next();
   }
   // bad data -> 422 UnprocessableEntityError
-  else {
-    log.warn('bad data schema -> %s', JSON.stringify(req.body));
-    return next(new restify.UnprocessableEntityError(config.unprocessableEntityErrorMessage));
-  }
+  log.warn('bad data schema -> %s', JSON.stringify(req.body));
+  return next(
+    new restify.UnprocessableEntityError(
+      config.UNPROCESSABLE_ENTITY_ERROR_MESSAGE));
 }
 
-// setup server
 var server = restify.createServer({})
 server.use(restify.bodyParser())
 server.use(restify.CORS())
 server.use(restify.fullResponse())
-// post request route is /data/
+
+// JSON post request route is named /data/
 server.post('/data/', handleRequest)
-// launch server
-server.listen(config.port)
-log.info('listening on %s', config.port)
+
+server.listen(config.PORT)
+log.info('listening on %s', config.PORT)

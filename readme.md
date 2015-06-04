@@ -25,4 +25,5 @@ then, `npm install`.
 
 to run, `npm start`
 
-for tests, refer to the [e2e test suite](http://github.com/testing-suite)
+to test, `npm test` (note, you have to ctrl-C after the last test runs)
+

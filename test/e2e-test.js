@@ -12,7 +12,7 @@ var PusherClient = require('pusher-client')
 // json REST client
 var jsonRestClient = request.createClient(
 	// URL OF RUNNING INDRA SERVER HERE
-	'localhost')
+	'http://indra.webfactional.com')
 
 // pusher socket client
 var indraChannel = new PusherClient(config.PUSHER_KEY
@@ -42,7 +42,7 @@ var badData = {
 test('posting good data -> 202', function(t) {
 	t.plan(1)
 	jsonRestClient.post(
-		'/data',
+		'/',
 		goodData,
 		function(error, response, body) {
 			t.equal(202, response.statusCode)
@@ -54,7 +54,7 @@ test('posting bad data -> 422 + UnprocessableEntityError', function(t) {
 	t.plan(6)
 	// 1. poorly-formed data
 	jsonRestClient.post(
-		'/data',
+		'/',
 		badData,
 		function(error, response, body) {
 			t.equal('UnprocessableEntityError', body.code, 'null data UnprocessableEntityError')
@@ -63,7 +63,7 @@ test('posting bad data -> 422 + UnprocessableEntityError', function(t) {
 	)
 	// 2. null data
 	jsonRestClient.post(
-		'/data', 
+		'/', 
 		null,
 		function(error, response, body) {
 			t.equal('UnprocessableEntityError', body.code, 'null data UnprocessableEntityError')
@@ -72,7 +72,7 @@ test('posting bad data -> 422 + UnprocessableEntityError', function(t) {
 	)
 	// 3. empty data
 	jsonRestClient.post(
-		'/data', 
+		'/', 
 		{},
 		function(error, response, body) {
 			t.equal('UnprocessableEntityError', body.code, 'empty data UnprocessableEntityError')
@@ -86,15 +86,8 @@ test('posting bad data -> 422 + UnprocessableEntityError', function(t) {
 // TESTS: pusher tests
 //
 
-// test('should be able to subscribe to the indra channel', function (t) {
-// 	t.plan(1)
-// 	// send a message
 
-// 	// on receive
-// 	//  -> t.ok()
-// })
-
-test('should be able to filter thru indra channel', function (t) {
+test('should be able to subscribe to indra channel', function (t) {
 	t.plan(1)
 
 	var aUniqueKey = JSON.stringify(new Date())
@@ -108,7 +101,7 @@ test('should be able to filter thru indra channel', function (t) {
 
 	// send a message with our unique key
 	jsonRestClient.post(
-		'/data', 
+		'/', 
 		{
 			type: 'testData',
 			data: { uniqueKey: aUniqueKey }

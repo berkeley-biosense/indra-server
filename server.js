@@ -5,7 +5,7 @@ var restify = require('restify')
 var Pusher = require('pusher')
 var bunyan = require('bunyan')
 var log = bunyan.createLogger({name: config.LOG_NAME})
-var isSchemaValid = require('./lib/indraSchemaValidator.js')
+var isSchemaValid = require('./src/indraSchemaValidator.js')
 
 // create pusher server
 var pusher = new Pusher({
@@ -74,8 +74,8 @@ server.use(restify.bodyParser())
 server.use(restify.CORS())
 server.use(restify.fullResponse())
 
-// JSON post request route is named /data/
-server.post('/data/', handleRequest)
+// JSON post request route is named /
+server.post('/', handleRequest)
 
 server.listen(config.PORT)
 log.info('listening on %s', config.PORT)

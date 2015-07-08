@@ -17,26 +17,26 @@ var pusher = new Pusher({
   // port: PORT, // optional, defaults to 80 for unencrypted and 443 for encrypted 
 })
 
-// connect to couch 
-db = new(cradle.Connection)(config.DB_HOST, config.DB_PORT, {
-    // secure: true,
-    auth: { username: config.DB_ADMIN_USERNAME, password: config.DB_ADMIN_PASSWORD }
-  }).database(config.DB_NAME)
-
-// create couchdb if it doesnt exist
-db.exists(function (err, exists) {
-  if (err) 
-    log.warn('db error -> %s', err)
-  if (exists) 
-    log.info('db connected')
-  if (!exists) {
-    log.info('db not found, trying to create db')
-    db.create(function (err) {
-      log.warn('error creating db -> %s', err)
-    })
-  }
-})
-
+//// connect to couch 
+//db = new(cradle.Connection)(config.DB_HOST, config.DB_PORT, {
+//    // secure: true,
+//    auth: { username: config.DB_ADMIN_USERNAME, password: config.DB_ADMIN_PASSWORD }
+//  }).database(config.DB_NAME)
+//
+//// create couchdb if it doesnt exist
+//db.exists(function (err, exists) {
+//  if (err) 
+//    log.warn('db error -> %s', err)
+//  if (exists) 
+//    log.info('db connected')
+//  if (!exists) {
+//    log.info('db not found, trying to create db')
+//    db.create(function (err) {
+//      log.warn('error creating db -> %s', err)
+//    })
+//  }
+//})
+//
 // sends data through pusherClient
 function publish (pusherServer, data) {
   // all data sent over a channel called 'everything'
@@ -57,7 +57,7 @@ function handleRequest (req, res, next) {
   // if valid json -> 
   if (isSchemaValid(req.body)) {
     data = addCreatedAt(req.body) // add createdAt field
-    db.save(data)  // append data to couch db
+    //db.save(data)  // append data to couch db
     publish(pusher, data) // publish over pusher
     res.send(202) // send 202
     return next();

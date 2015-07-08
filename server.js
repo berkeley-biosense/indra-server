@@ -1,11 +1,9 @@
 var config = require('./config.js')
-var _ = require('lodash')
-var cradle = require('cradle')
 var restify = require('restify')
 var Pusher = require('pusher')
 var bunyan = require('bunyan')
 var log = bunyan.createLogger({name: config.LOG_NAME})
-var isSchemaValid = require('./src/indraSchemaValidator.js')
+//var isSchemaValid = require('./src/indraSchemaValidator.js')
 
 // create pusher server
 var pusher = new Pusher({
@@ -15,26 +13,6 @@ var pusher = new Pusher({
   encrypted: config.IS_PUSHER_ENCRYPTED, // optional, defaults to false
   // host: 'HOST', // optional, defaults to api.pusherapp.com 
   // port: PORT, // optional, defaults to 80 for unencrypted and 443 for encrypted 
-})
-
-// connect to couch 
-db = new(cradle.Connection)(config.DB_HOST, config.DB_PORT, {
-    // secure: true,
-    auth: { username: config.DB_ADMIN_USERNAME, password: config.DB_ADMIN_PASSWORD }
-  }).database(config.DB_NAME)
-
-// create couchdb if it doesnt exist
-db.exists(function (err, exists) {
-  if (err) 
-    log.warn('db error -> %s', err)
-  if (exists) 
-    log.info('db connected')
-  if (!exists) {
-    log.info('db not found, trying to create db')
-    db.create(function (err) {
-      log.warn('error creating db -> %s', err)
-    })
-  }
 })
 
 // sends data through pusherClient
@@ -47,17 +25,15 @@ function publish (pusherServer, data) {
 }
 
 // extends post with {createdAt: 'ISOString'} and saves it to db
-function addCreatedAt (post) {
-  var d = new Date()
-  return _.extend(post, { createdAt: d.toISOString() })
-}
+//function addCreatedAt (post) {
+//  var d = new Date()
+//  return _.extend(post, { createdAt: d.toISOString() })
+//}
 
 // handles JSON post requests
 function handleRequest (req, res, next) {
   // if valid json -> 
-  if (isSchemaValid(req.body)) {
-    data = addCreatedAt(req.body) // add createdAt field
-    db.save(data)  // append data to couch db
+  if req.body.type {
     publish(pusher, data) // publish over pusher
     res.send(202) // send 202
     return next();

@@ -9,10 +9,10 @@ var indraSchema = {
   "id": "/Post",
   "type": "object",
   "properties": {
-    "type": {"type": "string"},
-    "data": {"type": "object"},
+    "type": {"type": "string"}
+    //"data": {"type": "object"},
   },
-  "required":["type", "data"]
+  "required":["type"]
 }
 
 // returns true/false if schema is/isnot valid

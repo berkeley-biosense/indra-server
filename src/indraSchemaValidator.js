@@ -10,9 +10,8 @@ var indraSchema = {
   "type": "object",
   "properties": {
     "type": {"type": "string"},
-    "data": {"type": "object"},
   },
-  "required":["type", "data"]
+  "required":["type"]
 }
 
 // returns true/false if schema is/isnot valid

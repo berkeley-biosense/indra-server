@@ -14,10 +14,9 @@ Then it publishes the data to socketIO
 
 ## Development
 
-### Request server
-then, `npm install`.
+first, `npm install`.
 
 to run, `npm start`
 
-to test, `npm test` (note, you have to ctrl-C after the last test runs)
+to test, `npm test` 
 

@@ -2,18 +2,16 @@
   "name": "indra-collection-server",
   "version": "1.0.0",
   "description": "",
-  "main": "db_config.js",
+  "main": "server.js",
   "dependencies": {
-    "cradle": "^0.6.9",
     "jsonschema": "^1.0.1",
     "lodash": "^3.9.3",
-    "pusher": "^1.0.5",
     "restify": "^3.0.2"
   },
   "devDependencies": {
     "bunyan": "^1.3.5",
-    "pusher-client": "^0.2.3",
     "request-json": "^0.5.3",
+    "socket.io-client": "^1.3.6",
     "tap-spec": "^4.0.0",
     "tape": "^4.0.0"
   },

@@ -18,5 +18,4 @@ first, `npm install`.
 
 to run, `npm start`
 
-to test, `npm test` 
-
+to test, `npm test` (server must be running, so `npm start` first)

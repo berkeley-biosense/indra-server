@@ -2,13 +2,12 @@ var test            = require('tape');
 var request         = require('request-json');
 var _               = require('lodash');
 var config          = require('../config.js')
-var indraFaucet     = require('socket.io-client')('http://localhost:3000/');
+var hostname        = 'http://localhost:' + config.PORT + '/'
+var indraFaucet     = require('socket.io-client')(hostname)
+var jsonRestClient  = request.createClient(hostname)
 
 // -- e2e tests --
 // these tests require the collection server to be running
-
-// json REST client
-var jsonRestClient = request.createClient('http://localhost:' + config.PORT + '/');
 
 // pusher socket client
 //var indraFaucet = socketio('http://localhost:' + config.PORT + "/");

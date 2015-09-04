@@ -4,9 +4,26 @@ var restify         = require('restify')
 var bunyan          = require('bunyan')
 var log             = bunyan.createLogger({name: config.LOG_NAME})
 var isSchemaValid   = require('./src/indraSchemaValidator.js')
-var app             = require('http').createServer(handleRequest)
 var socketio        = require('socket.io')
 var fs              = require('fs')
+var server          = restify.createServer()
+
+server.use(restify.bodyParser())
+server.use(restify.CORS())
+server.use(restify.fullResponse())
+
+// JSON post request route is named /
+server.post('/', handleRequest)
+
+server.listen(config.PORT, function () {
+  log.info('listening on %s', config.PORT)
+})
+
+var io = socketio.listen(server.server);
+//io.set('origins', '*')
+io.sockets.on('connection', function (socket) {
+  log.warn('client connected')
+})
 
 // sends data through socket.io
 function publish (data) {
@@ -36,18 +53,3 @@ function handleRequest (req, res, next) {
 }
 
 
-var server = restify.createServer({})
-server.use(restify.bodyParser())
-server.use(restify.CORS())
-server.use(restify.fullResponse())
-// JSON post request route is named /
-server.post('/', handleRequest)
-
-var io = socketio.listen(server.server);
-io.sockets.on('connection', function (socket) {
-  log.warn('client connected')
-})
-
-server.listen(config.PORT, function () {
-  log.info('listening on %s', config.PORT)
-})

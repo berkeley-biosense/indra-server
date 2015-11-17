@@ -31,9 +31,7 @@ socket.on('neurosky-mindwave', function (d) {
 })
 ```
 
-It adds to this POST request a field `receivedAt` with an ISOString.
-
-Then it publishes the data to socketIO
+As an added bonus, the data you get back when yuo subscribe will contain a `receivedAt` field indicating when the data got to the server.
 
 ## Development
 

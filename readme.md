@@ -1,6 +1,21 @@
-## indra collection server
+# indra server
 
-This server takes post requests to the route `/` with the schema:
+This is a pub/sub server. It was designed with prototyping sensor applications in mind. See [this blog post](http://coolworld.me/building-multiuser-sensor-apps/) for more details on that.
+
+## installation
+
+    npm install
+
+## running
+
+    npm start
+    
+
+# using 
+
+This server takes POST requests, with content-type `application/json`, to the route `/`.
+
+The JSON *must* include a `type` field
 
 ```
 {
@@ -8,8 +23,7 @@ This server takes post requests to the route `/` with the schema:
 }
 ```
 
-you can add any old data on top of that. so, a post request from your device might look like this:
-
+It can include any other fields you like ontop of that:
 
 ```javascript
 {
@@ -22,7 +36,7 @@ you can add any old data on top of that. so, a post request from your device mig
 }
 ```
 
-then, on the client side, we can subscribe to socket IO with `type` as the event:
+then, on the client side, we can subscribe to [socket.IO](http://socket.io/) with `type` as the event:
 
 ```javascript
 var socket = io('my-indra-server')
@@ -31,12 +45,16 @@ socket.on('neurosky-mindwave', function (d) {
 })
 ```
 
-As an added bonus, the data you get back when yuo subscribe will contain a `receivedAt` field indicating when the data got to the server.
+As an added bonus, the data you get back when you subscribe will contain a `receivedAt` field indicating when the data got to the server.
 
-## Development
+## developing
 
-first, `npm install`.
+stuff should be pretty self-explanatory.
 
-to run, `npm start`
+to run the tests, 
 
-to test, `npm test` (server must be running, so `npm start` first)
+    npm start
+
+to run the server, then
+
+    npm test
